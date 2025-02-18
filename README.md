@@ -10,7 +10,8 @@ So this is basically a different piece of work, but since there is a shared DNA 
 $ npm install asterisk-manager
 ```
 
-## Usage
+## Usage Javascript
+
 ```javascript
 /**
  * port:  port server
@@ -19,68 +20,133 @@ $ npm install asterisk-manager
  * password: username's password for authentication
  * events: this parameter determines whether events are emited.
  **/
-var ami = new require('asterisk-manager')('port','host','username','password', true);
+var ami = new require("asterisk-manager")(
+  "port",
+  "host",
+  "username",
+  "password",
+  true
+);
 
 // In case of any connectiviy problems we got you coverd.
 ami.keepConnected();
 
 // Listen for any/all AMI events.
-ami.on('managerevent', function(evt) {});
+ami.on("managerevent", function (evt) {});
 
 // Listen for specific AMI events. A list of event names can be found at
 // https://wiki.asterisk.org/wiki/display/AST/Asterisk+11+AMI+Events
-ami.on('hangup', function(evt) {});
-ami.on('confbridgejoin', function(evt) {});
+ami.on("hangup", function (evt) {});
+ami.on("confbridgejoin", function (evt) {});
 
 // Listen for Action responses.
-ami.on('response', function(evt) {});
+ami.on("response", function (evt) {});
 
 // Perform an AMI Action. A list of actions can be found at
 // https://wiki.asterisk.org/wiki/display/AST/Asterisk+11+AMI+Actions
-ami.action({
-  'action':'originate',
-  'channel':'SIP/myphone',
-  'context':'default',
-  'exten':1234,
-  'priority':1,
-  'variable':{
-    'name1':'value1',
-    'name2':'value2'
-  }
-}, function(err, res) {});
+ami.action(
+  {
+    action: "originate",
+    channel: "SIP/myphone",
+    context: "default",
+    exten: 1234,
+    priority: 1,
+    variable: {
+      name1: "value1",
+      name2: "value2",
+    },
+  },
+  function (err, res) {}
+);
 ```
+
+## Usage Typescript
+
+```typescript
+import AsteriskManager from "asterisk-manager";
+
+/**
+ * port:  port server
+ * host: host server
+ * username: username for authentication
+ * password: username's password for authentication
+ * events: this parameter determines whether events are emitted.
+ */
+const ami = new AsteriskManager("port", "host", "username", "password", true);
+
+// In case of any connectivity problems, keep the connection alive.
+ami.keepConnected();
+
+// Listen for any/all AMI events.
+ami.on("managerevent", (evt: any) => {
+  console.log("Manager Event:", evt);
+});
+
+// Listen for specific AMI events.
+ami.on("hangup", (evt: any) => {
+  console.log("Call hung up:", evt);
+});
+
+ami.on("confbridgejoin", (evt: any) => {
+  console.log("User joined conference:", evt);
+});
+
+// Listen for Action responses.
+ami.on("response", (evt: any) => {
+  console.log("Response:", evt);
+});
+
+// Perform an AMI Action.
+ami.action(
+  {
+    action: "originate",
+    channel: "SIP/myphone",
+    context: "default",
+    exten: 1234,
+    priority: 1,
+    variable: {
+      name1: "value1",
+      name2: "value2",
+    },
+  },
+  (err: Error | null, res?: any) => {
+    if (err) console.error("Error:", err);
+    else console.log("Action Response:", res);
+  }
+);
+```
+
 ## Contributors
 
- * [Philipp Dunkel](https://github.com/pipobscure)
- * [Igor Escobar](https://github.com/igorescobar)
- * [Tekay](https://github.com/Tekay)
- * [Kofi Hagan](https://github.com/kofibentum)
- * [Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
- * [Nick Mooney](https://github.com/Gnewt)
- * [Asp3ctus](https://github.com/Asp3ctus)
- * [Christian Gutierrez](https://github.com/chesstrian)
- * [bchavet](https://github.com/bchavet)
- * [Joserwan](https://github.com/joserwan)
- * [Joseph Garrone](https://github.com/garronej)
+- [Philipp Dunkel](https://github.com/pipobscure)
+- [Igor Escobar](https://github.com/igorescobar)
+- [Tekay](https://github.com/Tekay)
+- [Kofi Hagan](https://github.com/kofibentum)
+- [Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
+- [Nick Mooney](https://github.com/Gnewt)
+- [Asp3ctus](https://github.com/Asp3ctus)
+- [Christian Gutierrez](https://github.com/chesstrian)
+- [bchavet](https://github.com/bchavet)
+- [Joserwan](https://github.com/joserwan)
+- [Joseph Garrone](https://github.com/garronej)
 
 ## License
 
-MIT License
------------
+## MIT License
 
 Copyright (C) 2012 - 2017 by
-  [Philipp Dunkel](https://github.com/pipobscure)
-  [abroweb](https://github.com/abroweb)
-  [Igor Escobar](https://github.com/igorescobar)
-  [Tekay](https://github.com/Tekay)
-  [Kofi Hagan](https://github.com/kofibentum)
-  [Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
-  [Nick Mooney](https://github.com/Gnewt)
-  [Asp3ctus](https://github.com/Asp3ctus)
-  [Christian Gutierrez](https://github.com/chesstrian)
-  [bchavet](https://github.com/bchavet)
-  [Joserwan](https://github.com/joserwan)
-  [Joseph Garrone](https://github.com/garronej)
+[Philipp Dunkel](https://github.com/pipobscure)
+[abroweb](https://github.com/abroweb)
+[Igor Escobar](https://github.com/igorescobar)
+[Tekay](https://github.com/Tekay)
+[Kofi Hagan](https://github.com/kofibentum)
+[Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
+[Nick Mooney](https://github.com/Gnewt)
+[Asp3ctus](https://github.com/Asp3ctus)
+[Christian Gutierrez](https://github.com/chesstrian)
+[bchavet](https://github.com/bchavet)
+[Joserwan](https://github.com/joserwan)
+[Joseph Garrone](https://github.com/garronej)
 
 Based on a work Copyright (C) 2010 Brian White <mscdex@gmail.com>, but radically altered thereafter so as to constitute a new work.
 
