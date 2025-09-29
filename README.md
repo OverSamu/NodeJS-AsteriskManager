@@ -1,169 +1,464 @@
-# Asterisk Manager API
+# Asterisk Manager Interface (AMI) - TypeScript
 
-For a project of mine I needed a low level interface to the Asterisk Manager API. I looked around and found https://github.com/mscdex/node-asterisk . While it was a good starting point, it had too many abstractions for my taste. Which is why I based my version on it an then radically refactored it. In the end there now is very little in common with it.
+A modern, fully-typed TypeScript library for interacting with the Asterisk Manager Interface (AMI). This library provides a robust, event-driven interface for managing Asterisk PBX systems with full TypeScript support.
 
-So this is basically a different piece of work, but since there is a shared DNA and I got a good start by depending on Brian's work, I feel like giving credit is appropriate.
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9+-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
+[![License](https://img.shields.io/badge/License-See%20LICENSE-blue.svg)](./LICENSE)
 
-## Install
+## Features
 
-```
-$ npm install asterisk-manager
-```
+- 🎯 **Full TypeScript Support** - Complete type definitions for all AMI operations
+- 🔄 **Event-Driven Architecture** - Built on Node.js EventEmitter with proper typing
+- 🔐 **Authentication Management** - Automatic login and session handling
+- 🔌 **Auto-Reconnection** - Configurable automatic reconnection with exponential backoff
+- 📡 **Action Queue** - Intelligent action queuing when not authenticated
+- 🛡️ **Error Handling** - Comprehensive error handling and debugging support
+- 📦 **Zero Dependencies** - Only requires Node.js built-in modules
+- 🏗️ **Clean API** - Simple, intuitive interface for all AMI operations
 
-## Usage Javascript
+## Installation
 
-```javascript
-/**
- * port:  port server
- * host: host server
- * username: username for authentication
- * password: username's password for authentication
- * events: this parameter determines whether events are emited.
- **/
-var ami = new require("asterisk-manager")(
-  "port",
-  "host",
-  "username",
-  "password",
-  true
-);
-
-// In case of any connectiviy problems we got you coverd.
-ami.keepConnected();
-
-// Listen for any/all AMI events.
-ami.on("managerevent", function (evt) {});
-
-// Listen for specific AMI events. A list of event names can be found at
-// https://wiki.asterisk.org/wiki/display/AST/Asterisk+11+AMI+Events
-ami.on("hangup", function (evt) {});
-ami.on("confbridgejoin", function (evt) {});
-
-// Listen for Action responses.
-ami.on("response", function (evt) {});
-
-// Perform an AMI Action. A list of actions can be found at
-// https://wiki.asterisk.org/wiki/display/AST/Asterisk+11+AMI+Actions
-ami.action(
-  {
-    action: "originate",
-    channel: "SIP/myphone",
-    context: "default",
-    exten: 1234,
-    priority: 1,
-    variable: {
-      name1: "value1",
-      name2: "value2",
-    },
-  },
-  function (err, res) {}
-);
+```bash
+npm install asterisk-manager
 ```
 
-## Usage Typescript
+## Quick Start
+
+### TypeScript
 
 ```typescript
-import AsteriskManager from "asterisk-manager";
+import Manager from "asterisk-manager";
 
-/**
- * port:  port server
- * host: host server
- * username: username for authentication
- * password: username's password for authentication
- * events: this parameter determines whether events are emitted.
- */
-const ami = new AsteriskManager("port", "host", "username", "password", true);
+const ami = new Manager(5038, "localhost", "admin", "secret", true);
 
-// In case of any connectivity problems, keep the connection alive.
-ami.keepConnected();
-
-// Listen for any/all AMI events.
-ami.on("managerevent", (evt: any) => {
-  console.log("Manager Event:", evt);
+ami.on("connect", () => {
+  console.log("Connected to Asterisk Manager Interface");
 });
 
-// Listen for specific AMI events.
-ami.on("hangup", (evt: any) => {
-  console.log("Call hung up:", evt);
+ami.on("managerevent", (event) => {
+  console.log("AMI Event:", event);
 });
 
-ami.on("confbridgejoin", (evt: any) => {
-  console.log("User joined conference:", evt);
-});
-
-// Listen for Action responses.
-ami.on("response", (evt: any) => {
-  console.log("Response:", evt);
-});
-
-// Perform an AMI Action.
+// Execute an action
 ami.action(
   {
-    action: "originate",
-    channel: "SIP/myphone",
-    context: "default",
-    exten: 1234,
-    priority: 1,
-    variable: {
-      name1: "value1",
-      name2: "value2",
-    },
+    action: "Status",
   },
-  (err: Error | null, res?: any) => {
-    if (err) console.error("Error:", err);
-    else console.log("Action Response:", res);
+  (error, response) => {
+    if (error) {
+      console.error("Action failed:", error);
+    } else {
+      console.log("Status response:", response);
+    }
   }
 );
 ```
 
-## Contributors
+### JavaScript (CommonJS)
 
-- [Philipp Dunkel](https://github.com/pipobscure)
-- [Igor Escobar](https://github.com/igorescobar)
-- [Tekay](https://github.com/Tekay)
-- [Kofi Hagan](https://github.com/kofibentum)
-- [Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
-- [Nick Mooney](https://github.com/Gnewt)
-- [Asp3ctus](https://github.com/Asp3ctus)
-- [Christian Gutierrez](https://github.com/chesstrian)
-- [bchavet](https://github.com/bchavet)
-- [Joserwan](https://github.com/joserwan)
-- [Joseph Garrone](https://github.com/garronej)
+```javascript
+const Manager = require("asterisk-manager");
+
+const ami = new Manager(5038, "localhost", "admin", "secret", true);
+
+ami.on("connect", () => {
+  console.log("Connected to Asterisk Manager Interface");
+});
+```
+
+## API Documentation
+
+### Constructor
+
+```typescript
+new Manager(port?: number, host?: string, username?: string, password?: string, events?: boolean)
+```
+
+- `port` - AMI port (default: 5038)
+- `host` - Asterisk server hostname or IP
+- `username` - AMI username
+- `password` - AMI password
+- `events` - Whether to receive events (default: false)
+
+### Methods
+
+#### `connect(port: number, host: string, callback?: ConnectionCallback): void`
+
+Establishes a connection to the AMI.
+
+```typescript
+ami.connect(5038, "192.168.1.100", (error) => {
+  if (error) {
+    console.error("Connection failed:", error);
+  } else {
+    console.log("Connected successfully");
+  }
+});
+```
+
+#### `login(callback?: ManagerCallback): void`
+
+Authenticates with the AMI using provided credentials.
+
+```typescript
+ami.login((error, response) => {
+  if (error) {
+    console.error("Login failed:", error);
+  } else {
+    console.log("Logged in successfully");
+  }
+});
+```
+
+#### `action(action: ManagerAction, callback?: ManagerCallback): string`
+
+Executes an AMI action and returns the action ID.
+
+```typescript
+const actionId = ami.action(
+  {
+    action: "Originate",
+    channel: "SIP/1001",
+    context: "default",
+    exten: "1002",
+    priority: 1,
+  },
+  (error, response) => {
+    if (error) {
+      console.error("Originate failed:", error);
+    } else {
+      console.log("Call originated:", response);
+    }
+  }
+);
+```
+
+#### `keepConnected(): void`
+
+Enables automatic reconnection with exponential backoff.
+
+```typescript
+ami.keepConnected();
+```
+
+#### `disconnect(callback?: () => void): void`
+
+Disconnects from the AMI.
+
+```typescript
+ami.disconnect(() => {
+  console.log("Disconnected from AMI");
+});
+```
+
+#### `isConnected(): boolean`
+
+Returns the current connection status.
+
+```typescript
+if (ami.isConnected()) {
+  console.log("AMI is connected");
+}
+```
+
+### Events
+
+The library extends Node.js EventEmitter and emits various events:
+
+#### Connection Events
+
+```typescript
+ami.on("connect", () => {
+  console.log("Connected to AMI");
+});
+
+ami.on("close", () => {
+  console.log("Connection closed");
+});
+
+ami.on("error", (error) => {
+  console.error("Connection error:", error);
+});
+```
+
+#### AMI Events
+
+```typescript
+// All AMI events
+ami.on("managerevent", (event) => {
+  console.log("AMI Event:", event.event, event);
+});
+
+// Specific events (case-insensitive)
+ami.on("newchannel", (event) => {
+  console.log("New channel:", event.channel);
+});
+
+ami.on("hangup", (event) => {
+  console.log("Channel hung up:", event.channel);
+});
+
+// User events
+ami.on("userevent-myevent", (event) => {
+  console.log("Custom user event:", event);
+});
+```
+
+#### Action Responses
+
+```typescript
+// All action responses
+ami.on("response", (response) => {
+  console.log("Action response:", response);
+});
+
+// Specific action response by ID
+ami.once(actionId, (error, response) => {
+  if (error) {
+    console.error("Action failed:", error);
+  } else {
+    console.log("Action succeeded:", response);
+  }
+});
+```
+
+## TypeScript Types
+
+The library provides comprehensive TypeScript definitions:
+
+### Core Interfaces
+
+```typescript
+interface ManagerOptions {
+  port: number;
+  host: string;
+  username: string;
+  password: string;
+  events: boolean;
+}
+
+interface ManagerAction {
+  action: string;
+  actionid?: string;
+  [key: string]: unknown;
+}
+
+interface ManagerEvent {
+  event?: string;
+  response?: string;
+  actionid?: string;
+  content?: string;
+  [key: string]: unknown;
+}
+
+type ManagerCallback = (
+  error?: ManagerEvent | Error | null,
+  response?: ManagerEvent
+) => void;
+```
+
+### Specific Action Types
+
+```typescript
+interface LoginAction extends ManagerAction {
+  action: "login";
+  username: string;
+  secret: string;
+  event: "on" | "off";
+}
+
+// Define your own action types
+interface OriginateAction extends ManagerAction {
+  action: "Originate";
+  channel: string;
+  context: string;
+  exten: string;
+  priority: number;
+  timeout?: number;
+  callerid?: string;
+}
+```
+
+## Common Examples
+
+### Making a Call
+
+```typescript
+ami.action(
+  {
+    action: "Originate",
+    channel: "SIP/1001",
+    context: "default",
+    exten: "1002",
+    priority: 1,
+    timeout: 30000,
+    callerid: "Test Call <1001>",
+  },
+  (error, response) => {
+    if (error) {
+      console.error("Failed to originate call:", error);
+    } else {
+      console.log("Call originated successfully:", response);
+    }
+  }
+);
+```
+
+### Monitoring Channel Events
+
+```typescript
+ami.on("newchannel", (event) => {
+  console.log(`New channel created: ${event.channel}`);
+});
+
+ami.on("hangup", (event) => {
+  console.log(`Channel ${event.channel} hung up. Cause: ${event.cause}`);
+});
+
+ami.on("newstate", (event) => {
+  console.log(
+    `Channel ${event.channel} changed state to ${event.channelstatedesc}`
+  );
+});
+```
+
+### Getting System Status
+
+```typescript
+ami.action({ action: "Status" }, (error, response) => {
+  if (error) {
+    console.error("Failed to get status:", error);
+  } else {
+    console.log("System status:", response);
+  }
+});
+```
+
+### Listing Active Channels
+
+```typescript
+ami.action({ action: "CoreShowChannels" }, (error, response) => {
+  if (response?.response === "follows") {
+    console.log("Active channels:");
+    console.log(response.content);
+  }
+});
+```
+
+## Error Handling
+
+The library provides comprehensive error handling:
+
+```typescript
+ami.on("error", (error) => {
+  console.error("AMI Error:", error.message);
+
+  // Handle different error types
+  if (error.message.includes("ECONNREFUSED")) {
+    console.log("Asterisk server is not running or AMI is disabled");
+  }
+});
+
+// Action-specific error handling
+ami.action({ action: "InvalidAction" }, (error, response) => {
+  if (error) {
+    console.error("Action error:", error);
+    // error will contain the error response from Asterisk
+  }
+});
+```
+
+## Auto-Reconnection
+
+Enable automatic reconnection to handle network issues:
+
+```typescript
+const ami = new Manager(5038, "localhost", "admin", "secret", true);
+
+// Enable auto-reconnection
+ami.keepConnected();
+
+ami.on("connect", () => {
+  console.log("Connected to AMI");
+});
+
+ami.on("close", () => {
+  console.log("Connection lost, will attempt to reconnect...");
+});
+```
+
+## Building from Source
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd NodeJS-AsteriskManager
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
+
+# The compiled JavaScript and type definitions will be in the dist/ directory
+```
+
+## Development Scripts
+
+```bash
+# Build the project
+npm run build
+
+# Clean build artifacts
+npm run clean
+
+# Build for publishing
+npm run prepublishOnly
+```
+
+## Requirements
+
+- Node.js 16.0.0 or higher
+- TypeScript 5.9+ (for development)
+- Asterisk PBX with AMI enabled
+
+## Asterisk Configuration
+
+Ensure AMI is enabled in your Asterisk configuration (`/etc/asterisk/manager.conf`):
+
+```ini
+[general]
+enabled = yes
+port = 5038
+bindaddr = 0.0.0.0
+
+[admin]
+secret = your-secret-password
+deny=0.0.0.0/0.0.0.0
+permit=127.0.0.1/255.255.255.0
+read = system,call,log,verbose,agent,user,config,dtmf,reporting,cdr,dialplan
+write = system,call,agent,user,config,command,reporting,originate
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-## MIT License
+See the [LICENSE](./LICENSE) file for license information.
 
-Copyright (C) 2012 - 2017 by
-[Philipp Dunkel](https://github.com/pipobscure)
-[abroweb](https://github.com/abroweb)
-[Igor Escobar](https://github.com/igorescobar)
-[Tekay](https://github.com/Tekay)
-[Kofi Hagan](https://github.com/kofibentum)
-[Hugo Chinchilla Carbonell](https://github.com/hugochinchilla)
-[Nick Mooney](https://github.com/Gnewt)
-[Asp3ctus](https://github.com/Asp3ctus)
-[Christian Gutierrez](https://github.com/chesstrian)
-[bchavet](https://github.com/bchavet)
-[Joserwan](https://github.com/joserwan)
-[Joseph Garrone](https://github.com/garronej)
+## Credits
 
-Based on a work Copyright (C) 2010 Brian White <mscdex@gmail.com>, but radically altered thereafter so as to constitute a new work.
+This library is based on the original work from [node-asterisk](https://github.com/mscdex/node-asterisk) but has been completely rewritten in TypeScript with modern Node.js practices.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+### Authors & Maintainers
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+- **Philipp Dunkel** - Original concept
+- **Uchkun Rakhimov** - JavaScript implementation
+- **Igor Escobar** - Maintenance and improvements
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+---
+
+**Note**: This library provides a TypeScript-first approach to Asterisk AMI integration with comprehensive type safety and modern JavaScript features.

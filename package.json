@@ -18,18 +18,35 @@
       "web": "https://github.com/igorescobar"
     }
   ],
-  "version": "0.0.1",
-  "description": "A node.js module for interacting with the Asterisk Manager API.",
+  "version": "0.1.0",
+  "description": "A TypeScript node.js module for interacting with the Asterisk Manager API.",
   "keywords": [
     "asterisk",
     "voip",
     "ami",
     "asterisk-manager",
-    "@types/asterisk-manager"
+    "typescript",
+    "types"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/uchkunrakhimow/NodeJS-AsteriskManager.git"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2",
+    "@types/node": "^24.5.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
