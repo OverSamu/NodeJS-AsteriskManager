@@ -1,10 +1,11 @@
-# Asterisk Manager Interface (AMI) - TypeScript
+# asterisk-manager-ts
 
-A modern, fully-typed TypeScript library for interacting with the Asterisk Manager Interface (AMI). This library provides a robust, event-driven interface for managing Asterisk PBX systems with full TypeScript support.
+A modern, fully-typed TypeScript library for interacting with the Asterisk Manager Interface (AMI). Built from the ground up with TypeScript, this library provides a robust, event-driven interface for managing Asterisk PBX systems.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9+-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-16+-green.svg)](https://nodejs.org/)
-[![License](https://img.shields.io/badge/License-See%20LICENSE-blue.svg)](./LICENSE)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![npm version](https://img.shields.io/npm/v/asterisk-manager-ts.svg)](https://www.npmjs.com/package/asterisk-manager-ts)
 
 ## Features
 
@@ -20,15 +21,17 @@ A modern, fully-typed TypeScript library for interacting with the Asterisk Manag
 ## Installation
 
 ```bash
-npm install asterisk-manager
+npm install asterisk-manager-ts
 ```
+
+**Note**: This package includes TypeScript definitions built-in. No need to install `@types/asterisk-manager`.
 
 ## Quick Start
 
 ### TypeScript
 
 ```typescript
-import Manager from "asterisk-manager";
+import Manager from "asterisk-manager-ts";
 
 const ami = new Manager(5038, "localhost", "admin", "secret", true);
 
@@ -58,7 +61,7 @@ ami.action(
 ### JavaScript (CommonJS)
 
 ```javascript
-const Manager = require("asterisk-manager");
+const Manager = require("asterisk-manager-ts");
 
 const ami = new Manager(5038, "localhost", "admin", "secret", true);
 
@@ -392,7 +395,7 @@ ami.on("close", () => {
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/uchkunrakhimow/NodeJS-AsteriskManager.git
 cd NodeJS-AsteriskManager
 
 # Install dependencies
@@ -449,16 +452,32 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 See the [LICENSE](./LICENSE) file for license information.
 
-## Credits
+## Acknowledgments
 
-This library is based on the original work from [node-asterisk](https://github.com/mscdex/node-asterisk) but has been completely rewritten in TypeScript with modern Node.js practices.
+This TypeScript library is inspired by and based on the original JavaScript implementations:
 
-### Authors & Maintainers
+- [node-asterisk](https://github.com/mscdex/node-asterisk) by Brian White
+- [asterisk-manager](https://github.com/pipobscure/NodeJS-AsteriskManager) by Philipp Dunkel and contributors
 
-- **Philipp Dunkel** - Original concept
-- **Uchkun Rakhimov** - JavaScript implementation
-- **Igor Escobar** - Maintenance and improvements
+However, this version has been completely rewritten from scratch in TypeScript with modern Node.js practices, full type safety, and enhanced features.
+
+## Author
+
+**Uchkun Rakhimov**
+
+- GitHub: [@uchkunrakhimow](https://github.com/uchkunrakhimow)
+- Email: uchkunrakhimov@gmail.com
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit issues and pull requests.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-**Note**: This library provides a TypeScript-first approach to Asterisk AMI integration with comprehensive type safety and modern JavaScript features.
+**Built with ❤️ and TypeScript** - A modern approach to Asterisk AMI integration with comprehensive type safety and developer experience.

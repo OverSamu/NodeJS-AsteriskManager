@@ -1,47 +1,46 @@
 {
-  "name": "asterisk-manager",
-  "authors": [
-    {
-      "name": "Philipp Dunkel",
-      "githubUsername": "pipobscure"
-    },
-    {
-      "name": "Uchkun Rakhimov",
-      "githubUsername": "uchkunrakhimow",
-      "email": "uchkunrakhimov@gmail.com"
-    }
-  ],
-  "maintainers": [
-    {
-      "name": "Igor Escobar",
-      "email": "blog@igorescobar.com",
-      "web": "https://github.com/igorescobar"
-    }
-  ],
-  "version": "0.1.0",
-  "description": "A TypeScript node.js module for interacting with the Asterisk Manager API.",
+  "name": "asterisk-manager-ts",
+  "version": "1.0.0",
+  "description": "A modern TypeScript library for interacting with the Asterisk Manager Interface (AMI). Fully typed, event-driven, with auto-reconnection support.",
+  "author": {
+    "name": "Uchkun Rakhimov",
+    "email": "uchkunrakhimov@gmail.com",
+    "url": "https://github.com/uchkunrakhimow"
+  },
   "keywords": [
     "asterisk",
     "voip",
     "ami",
     "asterisk-manager",
     "typescript",
-    "types"
+    "types",
+    "pbx",
+    "telephony",
+    "sip",
+    "event-driven"
   ],
+  "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "echo \"Tests coming soon\" && exit 0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/uchkunrakhimow/NodeJS-AsteriskManager.git"
   },
+  "bugs": {
+    "url": "https://github.com/uchkunrakhimow/NodeJS-AsteriskManager/issues"
+  },
+  "homepage": "https://github.com/uchkunrakhimow/NodeJS-AsteriskManager#readme",
   "devDependencies": {
     "typescript": "^5.9.2",
     "@types/node": "^24.5.2"
