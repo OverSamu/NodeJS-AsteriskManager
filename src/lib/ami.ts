@@ -296,7 +296,7 @@ class AsteriskManagerImpl extends EventEmitter implements AsteriskManager {
 
     while (this.context.lines.length) {
       const line = this.context.lines.shift();
-      if (!line) continue;
+      if (line === undefined) continue;
 
       if (!lines.length && line.substr(0, 21) === "Asterisk Call Manager") {
         /**
